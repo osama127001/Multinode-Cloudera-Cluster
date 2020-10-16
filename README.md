@@ -258,3 +258,41 @@ It is important to disable SELinux for the ambari function to setup.
 * permenantly changing the umask for all the users: 
 
        echo umask 0022 >> /etc/profile
+
+## 13. Installation of Cloudera Manager, Deamons and Agents
+The installation of cloudera manager, deamons and agents is a bit different as the downloaded repo is not saved in the path where it can be installed, so `wget` the cloudera manager repo from the link given below:
+
+       wget https://archive.cloudera.com/cm6/6.3.1/redhat7/yum/cloudera-manager.repo
+
+* Make sure to check the python version before the installation of cloudera manager, the required version is `python2.7.5`. bu default it is installed. you can check by the command:
+
+       python --version
+
+* once the download is done, you can check by the command `yum repolist` of `ls /etc/yum.repos.d` to ensure that the cloudera-manager.repo is present there. In my case, it was not in the right path, it was in the main root folder. we can view it by `ls -ltr` command. Now execute the following command to move the cloudera-manager.repo file in correct folder:
+
+       mv cloudera-manager.repo /etc/yum.repos.d
+
+* once executed, you can view the repo using the command:
+
+       yum repolist
+
+* now install the cloudera manager server, deamon and agent in the master node only using the command:
+
+       yum install cloudera-manager-daemons cloudera-manager-agent cloudera-manager-server
+
+* before doing installations in any of the datanodes, make sure that java is installed, you can ensure the path of java "if exists":
+
+       which java
+
+* also you can check the version of java using the command:
+
+       java -version
+
+* If java is not installed, install java using the command:
+
+       yum install java-1.8.0-openjdk
+
+* Once java is installed, install the cloudera agents and deamons on all the datanodes using the command:
+
+       yum install cloudera-manager-daemons cloudera-manager-agent
+
