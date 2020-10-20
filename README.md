@@ -215,6 +215,12 @@ NTP ensures that the clocks of the nodes in the cluster are synchronized. follow
 
        ntpstat
 
+* Edit the file `/etc/ntp.conf` to add the following ntp servers:
+
+       server master
+       server datanode1
+       server datanode2
+
 ## 10. Disabling Firewalls / Configuring IP tables
 
 * execute the following 2 commands given below to disable the firewall
@@ -259,7 +265,118 @@ It is important to disable SELinux for the ambari function to setup.
 
        echo umask 0022 >> /etc/profile
 
-## 13. Installation of Cloudera Manager, Deamons and Agents
+## 13. Configuring MySQL for Ambari
+
+Installing and setting-up MySQL is different as the default database that is provided by ambari/cloudera is PostgreSQL, so follow the steps bellow to install SQL and Configuring it with Cloudera.
+
+* We need the package called `wget` to get repositoried and download services from CentOS. Install wget using the commmand:
+
+       yum install wget
+
+* Now we need to download MySQL.
+* **Note:** The version of ambari used in this guide is 2.7.3.0 and it does not support MySQL version 8, it has some issues. make sure to install the MySQL version 5 or 6.
+* Download MySQL v57 using the following `wget` link and installation commands.
+
+       wget https://dev.mysql.com/get/mysql57-community-release-el7-9.noarch.rpm
+       md5sum mysql57-community-release-el7-9.noarch.rpm
+       sudo rpm -ivh mysql57-community-release-el7-9.noarch.rpm
+
+* Now use the following command to install MySQL:
+
+       yum install mysql-server
+
+* Once MySQL is downloaded, check the status of MySQL before and after starting the service, execute the following commands:
+
+       systemctl status mysqld
+       systemctl start mysqld
+       systemctl status mysqld
+
+* Once MySQL service is running, log in with the `root` user with the following command: 
+
+       mysql -u root -p
+
+* after the above command, it will ask for the password, if the password was not set earlier, then we get get the password using:
+
+       grep 'password' /var/log/mysqld.log
+
+* The first step that you have to perform is to change the password using the `ALTER USER` command, because without changing password you cannot query anything when MySQL is just installed, so execute the following command:
+
+       ALTER USER 'root'@'localhost' IDENTIFIED BY 'Ambari123!';
+
+* Once we are logged in, we have to create a user and set a password that matches the ambari-setup configuration and MySQL, so for that we have to reduce the level of password strength policy, for that we can use the given command to check if the `validate_password_policy` is high or not:
+
+       SHOW VARIABLES LIKE 'validate_password%';
+
+* Following result is shown once the above query is executed: 
+
+       +--------------------------------------+--------+
+       | Variable_name                        | Value  |
+       +--------------------------------------+--------+
+       | validate_password_check_user_name    | OFF    |
+       | validate_password_dictionary_file    |        |
+       | validate_password_length             | 8      |
+       | validate_password_mixed_case_count   | 1      |
+       | validate_password_number_count       | 1      |
+       | validate_password_policy             | MEDIUM |
+       | validate_password_special_char_count | 1      |
+       +--------------------------------------+--------+
+
+* now execute the following to reduce the `validate_password_policy` level using the following command: 
+
+       SET GLOBAL validate_password_policy=LOW;
+
+* now exit my sql and move old InnoDB log files `/var/lib/mysql/ib_logfile0` and `/var/lib/mysql/ib_logfile1` out of `/var/lib/mysql/` to a backup location. for that create a backup location using the command:
+
+       mkdir innodbackup
+
+* now move both the files from the targer directory using the following command. 
+
+       mv /var/lib/mysql/ib_logfile0 innodbackup
+       mv /var/lib/mysql/ib_logfile1 innodbackup
+
+* install MySQL java connector using the following command
+
+       yum install mysql-connector-java
+
+* install java (recommended)
+
+       yum install java-1.8.0-openjdk
+
+* Once logged in, you have to create a user for ambari, for that execute the following on MySQL: 
+
+       CREATE DATABASE <database> DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
+       GRANT ALL ON <database>.* TO '<user>'@'%' IDENTIFIED BY '<password>';s
+       FLUSH PRIVILEGES
+
+* Now use the `ALTER USER` command again to set the same password for sql ass well:
+
+       ALTER USER 'root'@'localhost' IDENTIFIED BY 'ambari123';
+
+* For installing the JDBC connector, use the following command:
+
+       yum install mysql-connector-java
+
+*  To check the path of java, use the command:
+
+       which java
+
+* Now you can login using the `ambari` user: 
+
+       mysql -u ambari -p
+
+* Check the current logged in user using the command:
+
+       SELECT USER();
+
+* last and most important, use the following command to connect mysql with cloudera manager, if this command is not executed, the server will not run. if this command fails to execute, run this command after installing cloudera manager on the master node.
+
+       /opt/cloudera/cm/schema/scm_prepare_database.sh <databaseType> <databaseName> <databaseUser>
+
+* in the above command, in my case, database type is `mysql`, database name and user is `cloudera`.
+
+
+
+## 14. Installation of Cloudera Manager, Deamons and Agents
 The installation of cloudera manager, deamons and agents is a bit different as the downloaded repo is not saved in the path where it can be installed, so `wget` the cloudera manager repo from the link given below:
 
        wget https://archive.cloudera.com/cm6/6.3.1/redhat7/yum/cloudera-manager.repo
