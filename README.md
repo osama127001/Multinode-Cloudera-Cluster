@@ -345,8 +345,8 @@ Installing and setting-up MySQL is different as the default database that is pro
 * Once logged in, you have to create a user for ambari, for that execute the following on MySQL: 
 
        CREATE DATABASE <database> DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
-       GRANT ALL ON <database>.* TO '<user>'@'%' IDENTIFIED BY '<password>';s
-       FLUSH PRIVILEGES
+       GRANT ALL ON <database>.* TO '<user>'@'%' IDENTIFIED BY '<password>';
+       FLUSH PRIVILEGES;
 
 * Now use the `ALTER USER` command again to set the same password for sql ass well:
 
