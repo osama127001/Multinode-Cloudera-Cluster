@@ -348,13 +348,13 @@ Installing and setting-up MySQL is different as the default database that is pro
        GRANT ALL ON <database>.* TO '<user>'@'%' IDENTIFIED BY '<password>';
        FLUSH PRIVILEGES;
 
+* to check all the preveleges, use the following command: 
+
+       SHOW GRANTS FOR '<user>'@'%';
+
 * Now use the `ALTER USER` command again to set the same password for sql ass well:
 
        ALTER USER 'root'@'localhost' IDENTIFIED BY 'ambari123';
-
-* For installing the JDBC connector, use the following command:
-
-       yum install mysql-connector-java
 
 *  To check the path of java, use the command:
 
@@ -368,9 +368,6 @@ Installing and setting-up MySQL is different as the default database that is pro
 
        SELECT USER();
 
-* last and most important, use the following command to connect mysql with cloudera manager, if this command is not executed, the server will not run. if this command fails to execute, run this command after installing cloudera manager on the master node.
-
-       /opt/cloudera/cm/schema/scm_prepare_database.sh <databaseType> <databaseName> <databaseUser>
 
 * in the above command, in my case, database type is `mysql`, database name and user is `cloudera`.
 
@@ -412,4 +409,9 @@ The installation of cloudera manager, deamons and agents is a bit different as t
 * Once java is installed, install the cloudera agents and deamons on all the datanodes using the command:
 
        yum install cloudera-manager-daemons cloudera-manager-agent
+
+* last and most important, on master, use the following command to connect mysql with cloudera manager, if this command is not executed, the server will not run. if this command fails to execute, run this command after installing cloudera manager on the master node.
+
+       /opt/cloudera/cm/schema/scm_prepare_database.sh <databaseType> <databaseName> <databaseUser>
+
 
