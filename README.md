@@ -265,7 +265,7 @@ It is important to disable SELinux for the ambari function to setup.
 
        echo umask 0022 >> /etc/profile
 
-## 13. Configuring MySQL for Ambari
+## 13. Configuring MySQL for Cloudera
 
 Installing and setting-up MySQL is different as the default database that is provided by ambari/cloudera is PostgreSQL, so follow the steps bellow to install SQL and Configuring it with Cloudera.
 
@@ -413,5 +413,80 @@ The installation of cloudera manager, deamons and agents is a bit different as t
 * last and most important, on master, use the following command to connect mysql with cloudera manager, if this command is not executed, the server will not run. if this command fails to execute, run this command after installing cloudera manager on the master node.
 
        /opt/cloudera/cm/schema/scm_prepare_database.sh <databaseType> <databaseName> <databaseUser>
+
+
+## Issues
+
+## Post Installations Setups
+
+# Setup Kerberos
+
+* to setup kerberos, install kerberos workstation on all the nodes of the cluster. use the following commands to install the kerberos workstation:
+
+       yum install -y  krb5-workstation
+
+* install the kerberos server in just 1 node, which will act as the kerberos server. use the following command to install kerberos server:
+
+       yum install -y krb5-server
+
+* now we have to configure the `/etc/krb5.conf` file on every node. Use the folliowing command to configure the file: `vi /etc/krb5.conf`. Enter the file, delete all the contents of the file and paste the content given below:
+
+       [logging]
+       default = FILE:/var/log/krb5libs.log
+       kdc = FILE:/var/log/krb5kdc.log
+       admin_server = FILE:/var/log/kadmind.log
+
+       [libdefaults]
+       default_realm = HADOOPSECURITY.COM
+       dns_lookup_realm = false
+       dns_lookup_kdc = false
+       ticket_lifetime = 24h
+       renew_lifetime = 7d
+       forwardable = true
+
+
+       default_tgs_enctypes = aes256-cts-hmac-sha1-96 aes128-cts-hmac-sha1-96 arcfour-hmac-md5
+       default_tkt_enctypes = aes256-cts-hmac-sha1-96 aes128-cts-hmac-sha1-96 arcfour-hmac-md5
+       permitted_enctypes = aes256-cts-hmac-sha1-96 aes128-cts-hmac-sha1-96 arcfour-hmac-md5
+
+
+       [realms]
+       HADOOPSECURITY.COM = {
+       kdc = node2
+       admin_server = node2
+       max_renewable_life = 7d
+       }     
+
+* **`Note:`** In the above content, the `kdc` and `admin_server` values are set to the node in which the kerberos server is installed.
+
+* Now configure the file `/var/kerberos/krb5kdc/kadm5.acl` only one the node in which the kerberos server is installed, use the command `vi /var/kerberos/krb5kdc/kadm5.acl` to enter the file, delete all the current content and paste the following contents:
+
+       */admin@HADOOPSECURITY.COM      *
+
+* Now configure this file `vi /var/kerberos/krb5kdc/kdc.conf` also on the kerberos server node. Enter the file, delete all of its contents and add the contents given below:
+
+       [kdcdefaults]
+       kdc_ports = 88
+       kdc_tcp_ports = 88
+       
+       [realms]
+       HADOOPSECURITY.COM = {
+       #master_key_type = aes256-cts
+       acl_file = /var/kerberos/krb5kdc/kadm5.acl
+       dict_file = /usr/share/dict/words
+       admin_keytab = /var/kerberos/krb5kdc/kadm5.keytab
+       supported_enctypes = aes256-cts:normal aes128-cts:normal des3-hmac-sha1:normal arcfour-hmac:normal des-hmac-sha1:normal des-cbc-md5:normal des-cbc-crc:normal
+       max_renewable_life = 7d
+       }
+
+* use the `sudo kdb5_util create` command to set a master password, In my case the password is `admin@123`.
+
+* Enter the command `sudo kadmin.local`. it wil ask you to add a principle, add `addprinc cm/admin` in response. then it will ask for password, the password is `admin`. type `exit` after that to exit kadmin.local.
+
+* Now goto another host, other than the kerberos server node, and then enter `kinit cm/admin` command and enter the password `admin`. now enter the command `klist` to check if the ticket is available. To delete a ticket, `kdestroy` is used.
+
+
+
+
 
 
