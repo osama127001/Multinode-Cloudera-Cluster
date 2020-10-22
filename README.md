@@ -417,13 +417,13 @@ The installation of cloudera manager, deamons and agents is a bit different as t
 
 ## Issues
 
-## Post Installations Setups
+# Post Installations Setups
 
-# Setup Kerberos
+## Setup Kerberos
 
 * to setup kerberos, install kerberos workstation on all the nodes of the cluster. use the following commands to install the kerberos workstation:
 
-       yum install -y  krb5-workstation
+       yum install -y krb5-workstation
 
 * install the kerberos server in just 1 node, which will act as the kerberos server. use the following command to install kerberos server:
 
@@ -481,10 +481,36 @@ The installation of cloudera manager, deamons and agents is a bit different as t
 
 * use the `sudo kdb5_util create` command to set a master password, In my case the password is `admin@123`.
 
-* Enter the command `sudo kadmin.local`. it wil ask you to add a principle, add `addprinc cm/admin` in response. then it will ask for password, the password is `admin`. type `exit` after that to exit kadmin.local.
+* Enter the command `sudo kadmin.local`. it wil ask you to add a principle, add `addprinc cm/admin` in response. then it will ask for password, the password is `123`. type `exit` after that to exit kadmin.local.
 
-* Now goto another host, other than the kerberos server node, and then enter `kinit cm/admin` command and enter the password `admin`. now enter the command `klist` to check if the ticket is available. To delete a ticket, `kdestroy` is used.
+* Now goto another host, other than the kerberos server node, and then enter `kinit cm/admin` command and enter the password `123`. now enter the command `klist` to check if the ticket is available. To delete a ticket, `kdestroy` is used.
 
+* **`Note:`** You can only `kinit` the principle that you added in the `kadmin.local`.
+
+Beforing enabling Kerberos from cloudera manager, read some points below:
+
+* Cloudera manager supports MIT KDC and Active directory.
+* The KDC should be configured to have non-zero ticket lifetime and renewall lifetime. CDH will not work properly if the tickets are not renewable.
+* OpenLDap Client libraries should be installed on the cloudera server host if you want to use active directory. Also kerberos client liabraries should be installed on all the hosts.
+* Cloudera Manager needs an account that has permissions to create another accounts in the KDC.
+
+Enabling Kerberos on Cloudera Manager
+
+* Goto Administration > Security and click on `enable kerberos` button. 
+* Now it will ask for some permissions that are mentioned above, tick all and continue.
+* Now, select KDC Type as `MIT KDC`, add 3 encryption types and remove the current one. the three encryption types are given below, add them:
+
+       aes256-cts-hmac-sha1-96
+       aes128-cts-hmac-sha1-96
+       arcfour-hmac-md5
+
+Kerberos Security Name is `HADOOPSECURITY.COM` and KDC Server host, KDC Admin Server host is `node2` (Node in which the kerberos server is installed).
+
+* Now in the next step, untick to manage the `krb5.conf` file.
+
+* enter the credentials, `cm/admin` and password will be `123`.
+
+* Now the in the rest of the setup, keep the defaults and continue.
 
 
 
