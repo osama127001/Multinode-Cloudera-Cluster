@@ -334,15 +334,19 @@ Installing and setting-up MySQL is different as the default database that is pro
        mv /var/lib/mysql/ib_logfile0 innodbackup
        mv /var/lib/mysql/ib_logfile1 innodbackup
 
-* install MySQL java connector using the following command
+* install MySQL java connector using the following commands:
 
-       yum install mysql-connector-java
+       wget https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.46.tar.gz
+       tar zxvf mysql-connector-java-5.1.46.tar.gz
+       mkdir -p /usr/share/java/
+       cd mysql-connector-java-5.1.46
+       cp mysql-connector-java-5.1.46-bin.jar /usr/share/java/mysql-connector-java.jar
 
-* install java (recommended)
+* install java (recommended), on all datanodes, not on cloudera manager server.
 
        yum install java-1.8.0-openjdk
 
-* Once logged in, you have to create a user for ambari, for that execute the following on MySQL: 
+* Once logged in, you have to create a user for all the required users(see the users in cloudera docs), for that execute the following on MySQL: 
 
        CREATE DATABASE <database> DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
        GRANT ALL ON <database>.* TO '<user>'@'%' IDENTIFIED BY '<password>';
