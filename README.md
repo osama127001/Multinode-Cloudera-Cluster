@@ -348,9 +348,33 @@ Installing and setting-up MySQL is different as the default database that is pro
 
 * Once logged in, you have to create a user for all the required users(see the users in cloudera docs), for that execute the following on MySQL: 
 
-       CREATE DATABASE <database> DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
-       GRANT ALL ON <database>.* TO '<user>'@'%' IDENTIFIED BY '<password>';
-       FLUSH PRIVILEGES;
+       CREATE DATABASE scm DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
+       GRANT ALL ON scm.* TO 'scm'@'%' IDENTIFIED BY 'cloudera';
+
+       CREATE DATABASE amon DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
+       GRANT ALL ON amon.* TO 'amon'@'%' IDENTIFIED BY 'cloudera';
+
+       CREATE DATABASE rman DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
+       GRANT ALL ON rman.* TO 'rman'@'%' IDENTIFIED BY 'cloudera';
+
+       CREATE DATABASE hue DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
+       GRANT ALL ON hue.* TO 'hue'@'%' IDENTIFIED BY 'cloudera';
+
+       CREATE DATABASE metastore DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
+       GRANT ALL ON metastore.* TO 'hive'@'%' IDENTIFIED BY 'cloudera';
+
+       CREATE DATABASE sentry DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
+       GRANT ALL ON sentry.* TO 'sentry'@'%' IDENTIFIED BY 'cloudera';
+
+       CREATE DATABASE nav DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
+       GRANT ALL ON nav.* TO 'nav'@'%' IDENTIFIED BY 'cloudera';
+       
+       CREATE DATABASE navms DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
+       GRANT ALL ON navms.* TO 'navms'@'%' IDENTIFIED BY 'cloudera';
+
+       CREATE DATABASE oozie DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
+       GRANT ALL ON oozie.* TO 'oozie'@'%' IDENTIFIED BY 'cloudera';
+
 
 * to check all the preveleges, use the following command: 
 
@@ -380,7 +404,7 @@ Installing and setting-up MySQL is different as the default database that is pro
 ## 14. Installation of Cloudera Manager, Deamons and Agents
 The installation of cloudera manager, deamons and agents is a bit different as the downloaded repo is not saved in the path where it can be installed, so `wget` the cloudera manager repo from the link given below:
 
-       wget https://archive.cloudera.com/cm6/6.3.1/redhat7/yum/cloudera-manager.repo
+       sudo wget https://archive.cloudera.com/cm6/6.0.0/redhat7/yum/cloudera-manager.repo -P /etc/yum.repos.d/
 
 * Make sure to check the python version before the installation of cloudera manager, the required version is `python2.7.5`. bu default it is installed. you can check by the command:
 
