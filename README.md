@@ -445,6 +445,21 @@ The installation of cloudera manager, deamons and agents is a bit different as t
 
 ## Issues
 
+### Under Replicated Blocks
+Once the installation of the cluster is done using the web interface, now a warning was showing up. When the details were checked, it showed that there were under replicated blocks in the system. 
+
+* Under replicated blocks are the blocks/files with replication factor 3 but are actually replicated less than 3 times. To fix this issue, we need to find and delete all the files that are replicated. Run the following command to enter bash as an HDFS user in order to avoid any permission issues.
+
+       hdfs fsck /
+
+* once the above command is executed, it might display a long list of files that are corrupted. to delete them, execute the following command:
+
+       hdfs dfs -rm -skipTrash /path/to/curropted/files/*
+
+* execute the above commands again and again with the different paths of different files, and check by `hdfs fsck /` to see how many are deleted.
+
+* [Source of the solution.](https://stackoverflow.com/questions/19205057/how-to-fix-corrupt-hdfs-files)
+
 # Post Installations Setups
 
 ## Setup Kerberos
