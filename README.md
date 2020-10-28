@@ -292,7 +292,13 @@ It is important to disable SELinux for the ambari function to setup.
 
        chmod +x /etc/rc.d/rc.local
 
-## 15. Configuring MySQL for Cloudera
+## 15. Install JDK for cloudera manager (all nodes)
+
+It is important to install JDK on all nodes, use the following command to install JDK on all nodes:
+
+       sudo yum install oracle-j2sdk1.8
+
+## 16. Configuring MySQL for Cloudera
 
 Installing and setting-up MySQL is different as the default database that is provided by ambari/cloudera is PostgreSQL, so follow the steps bellow to install SQL and Configuring it with Cloudera.
 
@@ -426,9 +432,16 @@ Installing and setting-up MySQL is different as the default database that is pro
 
 * in the above command, in my case, database type is `mysql`, database name and user is `cloudera`.
 
+## 17. Installing JDBC Driver (all nodes)
+* install MySQL java connector on all nodes using the following commands:
 
+       wget https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.46.tar.gz
+       tar zxvf mysql-connector-java-5.1.46.tar.gz
+       mkdir -p /usr/share/java/
+       cd mysql-connector-java-5.1.46
+       cp mysql-connector-java-5.1.46-bin.jar /usr/share/java/mysql-connector-java.jar
 
-## 16. Installation of Cloudera Manager, Deamons and Agents
+## 18. Installation of Cloudera Manager, Deamons and Agents
 The installation of cloudera manager, deamons and agents is a bit different as the downloaded repo is not saved in the path where it can be installed, so `wget` the cloudera manager repo from the link given below:
 
        sudo wget https://archive.cloudera.com/cm6/6.0.0/redhat7/yum/cloudera-manager.repo -P /etc/yum.repos.d/
