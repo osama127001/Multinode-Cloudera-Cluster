@@ -497,8 +497,12 @@ Once the installation of the cluster is done using the web interface, now a warn
 
 * [Source of the solution.](https://stackoverflow.com/questions/19205057/how-to-fix-corrupt-hdfs-files)
 
-### Set Swappiness and Disable huge pages
-### Installing Oozie ShareLib 
+### Web Server Status
+If there are any issues/errors related to getting `web server status`, then wait for some time, the issue will be resolved bu itself
+
+### Service Canary
+If there are any issues/errors related to getting `[service] canary`, for example `hdfs canary` issue of `hive canary`, then wait for some time, the issue will be resolved bu itself.
+
 
 # Post Installations Setups
 
