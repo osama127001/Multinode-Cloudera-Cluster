@@ -56,7 +56,7 @@ after entering the following credentials, you are currently in the localhost.
 
 * To set a static IP address, use the following command to add configurations:
 
-       vi /etc/sysconfig/network-scripts/ifcfg-**enp0s8**
+       vi /etc/sysconfig/network-scripts/ifcfg-enp0s8
 
 Note that **enp0s8 is the name of the adapter in my machine**
 * You will be prompted with the following contents of the file:
@@ -137,9 +137,9 @@ Note that **enp0s8 is the name of the adapter in my machine**
 
        127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
        ::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
-       192.168.XXX.XXX master
-       192.168.YYY.XXX datanode1
-       192.168.XXX.YYY datanode2
+       192.168.XXX.XXX master.company.com master
+       192.168.YYY.XXX datanode1.company.com datanode1 
+       192.168.XXX.YYY datanode2.company.com datanode2
 
 * in the above contents of the file, `master`, `datanode1` and `datanode2` are the names of the hosts.
 * make sure to add these settings on each host of the cluster in order for the hosts to work.
@@ -149,7 +149,7 @@ Note that **enp0s8 is the name of the adapter in my machine**
        ssh datanode1
        ssh datanode2
 
-## 8. Setup Password-less SSH
+## 8. Setup Password-less SSH (Not Important)
 Password-less enables each node in the cluster to ssh any node without authentication or password. follow the steps given below in order to setup passwordless SSH
 * Use the following command to generate a key. 
 
@@ -265,7 +265,30 @@ It is important to disable SELinux for the ambari function to setup.
 
        echo umask 0022 >> /etc/profile
 
-## 13. Configuring MySQL for Cloudera
+## 13. Set Swappiness 
+
+* Cloudera recommends to set the value of swappiness between 1 and 10, based upon the strength of the machine, but its recommended to set `swappiness=1`
+
+* execute this command to set the value of swappiness:
+
+       sysctl vm.swappiness=1
+
+* Also, open the file `/etc/sysctl.conf` and add the line:
+
+       vm.swappiness=1
+
+* use the following commands to check the swappiness:
+
+       cat /proc/sys/vm/swappiness
+
+
+## 14. Disable Huge pages
+* It is highly recommended to disable huge pages. for that, add the following lines in `/etc/rc.local`:
+
+       echo never > /sys/kernel/mm/transparent_hugepage/defrag
+       echo never > /sys/kernel/mm/transparent_hugepage/enabled
+
+## 15. Configuring MySQL for Cloudera
 
 Installing and setting-up MySQL is different as the default database that is provided by ambari/cloudera is PostgreSQL, so follow the steps bellow to install SQL and Configuring it with Cloudera.
 
@@ -401,7 +424,7 @@ Installing and setting-up MySQL is different as the default database that is pro
 
 
 
-## 14. Installation of Cloudera Manager, Deamons and Agents
+## 16. Installation of Cloudera Manager, Deamons and Agents
 The installation of cloudera manager, deamons and agents is a bit different as the downloaded repo is not saved in the path where it can be installed, so `wget` the cloudera manager repo from the link given below:
 
        sudo wget https://archive.cloudera.com/cm6/6.0.0/redhat7/yum/cloudera-manager.repo -P /etc/yum.repos.d/
@@ -442,6 +465,10 @@ The installation of cloudera manager, deamons and agents is a bit different as t
 
        /opt/cloudera/cm/schema/scm_prepare_database.sh <databaseType> <databaseName> <databaseUser>
 
+* Generally the command is:
+
+       /opt/cloudera/cm/schema/scm_prepare_database.sh mysql scm scm
+
 
 ## Issues
 
@@ -456,9 +483,22 @@ Once the installation of the cluster is done using the web interface, now a warn
 
        hdfs dfs -rm -skipTrash /path/to/curropted/files/*
 
-* execute the above commands again and again with the different paths of different files, and check by `hdfs fsck /` to see how many are deleted.
+* execute the above commands again and again with the different paths of different files, and check by `hdfs fsck /` to see how many are deleted. In my case, I used the following commands:
+
+       hdfs dfs -rm -skipTrash /user/oozie/share/lib/lib_20201028110301/sqoop/*
+       hdfs dfs -rm -skipTrash /user/oozie/share/lib/lib_20201028110301/spark/*
+       hdfs dfs -rm -skipTrash /user/oozie/share/lib/lib_20201028110301/pig/*
+       hdfs dfs -rm -skipTrash /user/oozie/share/lib/lib_20201028110301/hive2/*
+       hdfs dfs -rm -skipTrash /user/oozie/share/lib/lib_20201028110301/hive/*
+       hdfs dfs -rm -skipTrash /user/oozie/share/lib/lib_20201028110301/hcatalog/*
+       hdfs dfs -rm -skipTrash /user/oozie/share/lib/lib_20201028110301/distcp/*
+       hdfs dfs -rm -skipTrash /user/oozie/share/lib/lib_20201028110301/mapreduce-streaming/*
+       hdfs dfs -rm -skipTrash /user/oozie/share/lib/lib_20201028110301/sharelib.properties
 
 * [Source of the solution.](https://stackoverflow.com/questions/19205057/how-to-fix-corrupt-hdfs-files)
+
+### Set Swappiness and Disable huge pages
+### Installing Oozie ShareLib 
 
 # Post Installations Setups
 
