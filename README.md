@@ -288,6 +288,10 @@ It is important to disable SELinux for the ambari function to setup.
        echo never > /sys/kernel/mm/transparent_hugepage/defrag
        echo never > /sys/kernel/mm/transparent_hugepage/enabled
 
+* change the permission of the file after adding the above lines using the following command:
+
+       chmod +x /etc/rc.d/rc.local
+
 ## 15. Configuring MySQL for Cloudera
 
 Installing and setting-up MySQL is different as the default database that is provided by ambari/cloudera is PostgreSQL, so follow the steps bellow to install SQL and Configuring it with Cloudera.
