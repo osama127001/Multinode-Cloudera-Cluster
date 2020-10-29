@@ -91,6 +91,10 @@ Note that **enp0s8 is the name of the adapter in my machine**
 
 * Static IP will be set after the restart.
 
+## Update Yum
+Update yum using the following command:
+
+       yum update
 
 ## 5. Check the availlable memory and storage
 * to check the available memory of the system, use the following command:
@@ -296,7 +300,7 @@ It is important to disable SELinux for the ambari function to setup.
 
 It is important to install JDK on all nodes, use the following command to install JDK on all nodes:
 
-       sudo yum install oracle-j2sdk1.8
+       yum install java-1.8.0-openjdk
 
 ## 16. Configuring MySQL for Cloudera
 
@@ -478,6 +482,7 @@ The installation of cloudera manager, deamons and agents is a bit different as t
 
        yum install cloudera-manager-daemons cloudera-manager-agent
 
+## 19. Connecting Cloudera manager with MySQL
 * last and most important, on master, use the following command to connect mysql with cloudera manager, if this command is not executed, the server will not run. if this command fails to execute, run this command after installing cloudera manager on the master node.
 
        /opt/cloudera/cm/schema/scm_prepare_database.sh <databaseType> <databaseName> <databaseUser>
@@ -520,6 +525,10 @@ If there are any issues/errors related to getting `web server status`, then wait
 ### Service Canary
 If there are any issues/errors related to getting `[service] canary`, for example `hdfs canary` issue of `hive canary`, then wait for some time, the issue will be resolved bu itself.
 
+### Issues while creating namenode directory
+If there are any issues while the `command details` section of adding the cluster, there will be a folder named `current` in `/dfs/nn` path, delete this folder using the following command and try again:
+
+       rm -rf /dfs/nn/current
 
 # Post Installations Setups
 
