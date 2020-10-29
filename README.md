@@ -494,7 +494,7 @@ The installation of cloudera manager, deamons and agents is a bit different as t
 
 ## Issues
 
-### Under Replicated Blocks
+### 1. Under Replicated Blocks
 Once the installation of the cluster is done using the web interface, now a warning was showing up. When the details were checked, it showed that there were under replicated blocks in the system. 
 
 * Under replicated blocks are the blocks/files with replication factor 3 but are actually replicated less than 3 times. To fix this issue, we need to find and delete all the files that are replicated. Run the following command to enter bash as an HDFS user in order to avoid any permission issues.
@@ -514,18 +514,19 @@ Once the installation of the cluster is done using the web interface, now a warn
        hdfs dfs -rm -skipTrash /user/oozie/share/lib/lib_20201028110301/hive/*
        hdfs dfs -rm -skipTrash /user/oozie/share/lib/lib_20201028110301/hcatalog/*
        hdfs dfs -rm -skipTrash /user/oozie/share/lib/lib_20201028110301/distcp/*
+       hdfs dfs -rm -skipTrash /user/oozie/share/lib/lib_20201028110301/oozie/*
        hdfs dfs -rm -skipTrash /user/oozie/share/lib/lib_20201028110301/mapreduce-streaming/*
        hdfs dfs -rm -skipTrash /user/oozie/share/lib/lib_20201028110301/sharelib.properties
 
 * [Source of the solution.](https://stackoverflow.com/questions/19205057/how-to-fix-corrupt-hdfs-files)
 
-### Web Server Status
+### 2. Web Server Status
 If there are any issues/errors related to getting `web server status`, then wait for some time, the issue will be resolved bu itself
 
-### Service Canary
+### 3. Service Canary
 If there are any issues/errors related to getting `[service] canary`, for example `hdfs canary` issue of `hive canary`, then wait for some time, the issue will be resolved bu itself.
 
-### Issues while creating namenode directory
+### 4. Issues while creating namenode directory
 If there are any issues while the `command details` section of adding the cluster, there will be a folder named `current` in `/dfs/nn` path, delete this folder using the following command and try again:
 
        rm -rf /dfs/nn/current
