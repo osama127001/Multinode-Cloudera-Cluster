@@ -533,6 +533,16 @@ If there are any issues while the `command details` section of adding the cluste
 
 # Post Installations Setups
 
+## Setup Datanodes
+Make sure that datanodes are installed on all the nodes of the cluster, it is important. Also it is relatedd to the issues of `over-replicated` and `under-replicated` blocks.
+
+**`Recommended:`** Install datanodes during the installation of the cluster. 
+
+## Setup Zookeeper
+Cloudera suggests to install at-least 3 Zookeeper servers in the cluster, so make sure to install `zookeeper server` of 3 different nodes. 
+
+**`Recommended:`** Install 3 Zookeeper servers during the installation of the cluster. 
+
 ## Setup Kerberos
 
 * to setup kerberos, install kerberos workstation on all the nodes of the cluster. use the following commands to install the kerberos workstation:
