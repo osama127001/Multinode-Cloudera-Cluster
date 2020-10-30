@@ -491,6 +491,23 @@ The installation of cloudera manager, deamons and agents is a bit different as t
 
        /opt/cloudera/cm/schema/scm_prepare_database.sh mysql scm scm
 
+## 20. Opening Cloudera Manager UI
+Once everything is installed and setup, restart cloudera agents on all nodes using the command:
+
+       systemctl start cloudera-scm-agent
+
+Make sure that java is installed, JDBC is installed and mysql is running. Now run the following command to run the cloudera manager server:
+
+       systemctl start cloudera-scm-server
+
+Use this command to track the log file of cloudera manager server:
+
+       sudo tail -f /var/log/cloudera-scm-server/cloudera-scm-server.log
+
+Open the web browser, and Access the Cloudera manager UI using the following link
+
+       http://server.ip.address:7180
+
 
 ## Issues
 
@@ -534,12 +551,12 @@ If there are any issues while the `command details` section of adding the cluste
 # Post Installations Setups
 
 ## Setup Datanodes
-Make sure that datanodes are installed on all the nodes of the cluster, it is important. Also it is relatedd to the issues of `over-replicated` and `under-replicated` blocks.
+Make sure that datanodes are installed on all the nodes of the cluster, it is important. Also it is related to the issues of `over-replicated` and `under-replicated` blocks.
 
 **`Recommended:`** Install datanodes during the installation of the cluster. 
 
 ## Setup Zookeeper
-Cloudera suggests to install at-least 3 Zookeeper servers in the cluster, so make sure to install `zookeeper server` of 3 different nodes. 
+Cloudera suggests to install at-least 3 Zookeeper servers in the cluster, so make sure to install `zookeeper server` on 3 different nodes. 
 
 **`Recommended:`** Install 3 Zookeeper servers during the installation of the cluster. 
 
