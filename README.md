@@ -561,6 +561,18 @@ Cloudera suggests to install at-least 3 Zookeeper servers in the cluster, so mak
 **`Recommended:`** Install 3 Zookeeper servers during the installation of the cluster. 
 
 ## Setup Kerberos
+Kerberos is a network authentication protocol developed by MIT, which eliminates the need for transmision of password accross the network and removes the threat of any attack.
+
+**`KDC (Key Distribution Center): `** KDC is the authentication server in kerberos environment. In most of the cases KDC is resided in the seperate physical server. We can devide KDC into 3 parts:
+
+1. Database
+This database stores users and service identities, these identities are known as `Principles`. It also stores information like encryption key, ticket validity duration and expiration date etc.
+
+2. AS (Authentication Server)
+This server authenticates a user and issues a `TGT (Ticket Granting Ticket)`. If you have a valid TGT, means authentication server has verified your credentials.
+
+3. TGS (Ticket Granting Server)
+TGS is the application server of KDC which provides service ticket. To access any hadoop service on the cluster, we need to get a service ticket from TGS.
 
 * to setup kerberos, install kerberos workstation on all the nodes of the cluster. use the following commands to install the kerberos workstation:
 
