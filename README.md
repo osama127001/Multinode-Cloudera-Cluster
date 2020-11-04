@@ -565,15 +565,17 @@ Kerberos is a network authentication protocol developed by MIT, which eliminates
 
 **`KDC (Key Distribution Center): `** KDC is the authentication server in kerberos environment. In most of the cases KDC is resided in the seperate physical server. We can devide KDC into 3 parts:
 
-1. Database
+### 1. Database
 This database stores users and service identities, these identities are known as `Principles`. It also stores information like encryption key, ticket validity duration and expiration date etc.
 
-2. AS (Authentication Server)
+### 2. AS (Authentication Server)
 This server authenticates a user and issues a `TGT (Ticket Granting Ticket)`. If you have a valid TGT, means authentication server has verified your credentials.
 
-3. TGS (Ticket Granting Server)
+### 3. TGS (Ticket Granting Server)
 TGS is the application server of KDC which provides service ticket. To access any hadoop service on the cluster, we need to get a service ticket from TGS.
 
+**`Principal:`** Kerberos database maintains identities, then assigns tickets to these identities. There identities are called `principals`. A principal has 3 parts, `primary`, `instance` and `realm`. In the principal `cm/admin@METIS.COM`, `cm` is primary, `admin` is instance and `METIS.COM` is realms. The instance part is optional.
+ 
 ### 1. Install Kerberos Client on all Machines (Nodes):
 * to setup kerberos, install kerberos workstation on all the nodes of the cluster. use the following commands to install the kerberos workstation:
 
@@ -594,7 +596,7 @@ Configuring Kerberos includes configuring the `realm` for kerberos, you can thin
        kdc_tcp_ports = 88
        
        [realms]
-       HADOOPSECURITY.COM = {
+       METIS.COM = {
        #master_key_type = aes256-cts
        acl_file = /var/kerberos/krb5kdc/kadm5.acl
        dict_file = /usr/share/dict/words
@@ -612,7 +614,7 @@ Configuring Kerberos includes configuring the `realm` for kerberos, you can thin
        admin_server = FILE:/var/log/kadmind.log
 
        [libdefaults]
-       default_realm = HADOOPSECURITY.COM
+       default_realm = METIS.COM
        dns_lookup_realm = false
        dns_lookup_kdc = false
        ticket_lifetime = 24h
@@ -626,29 +628,43 @@ Configuring Kerberos includes configuring the `realm` for kerberos, you can thin
 
 
        [realms]
-       HADOOPSECURITY.COM = {
-       kdc = node2
-       admin_server = node2
+       METIS.COM = {
+       kdc = node2.metis.com
+       admin_server = node2.metis.com
        max_renewable_life = 7d
        }     
 
 * **`Note:`** In the above content, the `kdc` and `admin_server` values are set to the node in which the kerberos server is installed.
 
 
+### 4. Create KDC Database
+* use the following command to create a KDC database and set a master password, In my case the password is `Admin@123`.
+
+       kdb5_util create -r PTCL.NET.PK -s
+
+### 5. Update the ACL File
 * Now configure the file `/var/kerberos/krb5kdc/kadm5.acl` only one the node in which the kerberos server is installed, use the command `vi /var/kerberos/krb5kdc/kadm5.acl` to enter the file, delete all the current content and paste the following contents:
 
-       */admin@HADOOPSECURITY.COM      *
+       */admin@METIS.COM      *
 
+### 6. Create KDC Admin
+* Enter the command `kadmin.local`. it wil ask you to add a principal, add `addprinc root/admin@METIS.COM` in response. then it will ask for password, the password is `admin`. type `exit` after that to exit kadmin.local.
 
-* use the `sudo kdb5_util create` command to set a master password, In my case the password is `admin@123`.
+### 7. Start Kerberos
+use the following set of commands to start kerberos services:(start krb5kdc on all nodes)
 
-* Enter the command `sudo kadmin.local`. it wil ask you to add a principle, add `addprinc cm/admin` in response. then it will ask for password, the password is `123`. type `exit` after that to exit kadmin.local.
+       service krb5kdc start OR systemctl start krb5kdc
+       service kadmin start OR systemctl start kadmin
 
-* Now goto another host, other than the kerberos server node, and then enter `kinit cm/admin` command and enter the password `123`. now enter the command `klist` to check if the ticket is available. To delete a ticket, `kdestroy` is used.
+It is also recommended to enable them, to start the service on boot.
+
+### 8. Testing Kerberos
+
+* Now goto another host, other than the kerberos server node, and then enter `kinit root/admin` command and enter the password `admin`. now enter the command `klist` to check if the ticket is available. To delete a ticket, `kdestroy` is used.
 
 * **`Note:`** You can only `kinit` the principle that you added in the `kadmin.local`.
 
-Beforing enabling Kerberos from cloudera manager, read some points below:
+### Beforing enabling Kerberos from cloudera manager, read some points below:
 
 * Cloudera manager supports MIT KDC and Active directory.
 * The KDC should be configured to have non-zero ticket lifetime and renewall lifetime. CDH will not work properly if the tickets are not renewable.
