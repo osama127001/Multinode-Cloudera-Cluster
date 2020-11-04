@@ -221,9 +221,9 @@ NTP ensures that the clocks of the nodes in the cluster are synchronized. follow
 
 * Edit the file `/etc/ntp.conf` to add the following ntp servers:
 
-       server master
-       server datanode1
-       server datanode2
+       server 1.pk.pool.ntp.org
+       server 0.asia.pool.ntp.org
+       server 3.asia.pool.ntp.org  
 
 ## 10. Disabling Firewalls / Configuring IP tables
 
@@ -640,7 +640,7 @@ Configuring Kerberos includes configuring the `realm` for kerberos, you can thin
 ### 4. Create KDC Database
 * use the following command to create a KDC database and set a master password, In my case the password is `Admin@123`.
 
-       kdb5_util create -r PTCL.NET.PK -s
+       kdb5_util create -r METIS.COM -s
 
 ### 5. Update the ACL File
 * Now configure the file `/var/kerberos/krb5kdc/kadm5.acl` only one the node in which the kerberos server is installed, use the command `vi /var/kerberos/krb5kdc/kadm5.acl` to enter the file, delete all the current content and paste the following contents:
