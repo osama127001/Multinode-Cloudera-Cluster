@@ -419,7 +419,7 @@ Installing and setting-up MySQL is different as the default database that is pro
 
 * Now use the `ALTER USER` command again to set the same password for sql ass well:
 
-       ALTER USER 'root'@'localhost' IDENTIFIED BY 'ambari123';
+       ALTER USER 'root'@'localhost' IDENTIFIED BY 'cloudera';
 
 *  To check the path of java, use the command:
 
@@ -574,13 +574,35 @@ This server authenticates a user and issues a `TGT (Ticket Granting Ticket)`. If
 3. TGS (Ticket Granting Server)
 TGS is the application server of KDC which provides service ticket. To access any hadoop service on the cluster, we need to get a service ticket from TGS.
 
+### 1. Install Kerberos Client on all Machines (Nodes):
 * to setup kerberos, install kerberos workstation on all the nodes of the cluster. use the following commands to install the kerberos workstation:
 
-       yum install -y krb5-workstation
+       yum install krb5-workstation krb5-libs krb5-auth-dialog
 
+### 2. Install Server on one Machines (Node):
 * install the kerberos server in just 1 node, which will act as the kerberos server. use the following command to install kerberos server:
 
-       yum install -y krb5-server
+       yum install krb5-server
+
+### 3. Configure Kerberos
+Configuring Kerberos includes configuring the `realm` for kerberos, you can think off `realm` as a **namespace** or a **logical boundry** within which kerberos has the authority to authenticate someone.
+
+* Now configure this file `vi /var/kerberos/krb5kdc/kdc.conf` to define realm. Perform this on the kerberos server node. Enter the file, delete all of its contents and add the contents given below:
+
+       [kdcdefaults]
+       kdc_ports = 88
+       kdc_tcp_ports = 88
+       
+       [realms]
+       HADOOPSECURITY.COM = {
+       #master_key_type = aes256-cts
+       acl_file = /var/kerberos/krb5kdc/kadm5.acl
+       dict_file = /usr/share/dict/words
+       admin_keytab = /var/kerberos/krb5kdc/kadm5.keytab
+       supported_enctypes = aes256-cts:normal aes128-cts:normal des3-hmac-sha1:normal arcfour-hmac:normal des-hmac-sha1:normal des-cbc-md5:normal des-cbc-crc:normal
+       max_renewable_life = 7d
+       }
+
 
 * now we have to configure the `/etc/krb5.conf` file on every node. Use the folliowing command to configure the file: `vi /etc/krb5.conf`. Enter the file, delete all the contents of the file and paste the content given below:
 
@@ -612,25 +634,11 @@ TGS is the application server of KDC which provides service ticket. To access an
 
 * **`Note:`** In the above content, the `kdc` and `admin_server` values are set to the node in which the kerberos server is installed.
 
+
 * Now configure the file `/var/kerberos/krb5kdc/kadm5.acl` only one the node in which the kerberos server is installed, use the command `vi /var/kerberos/krb5kdc/kadm5.acl` to enter the file, delete all the current content and paste the following contents:
 
        */admin@HADOOPSECURITY.COM      *
 
-* Now configure this file `vi /var/kerberos/krb5kdc/kdc.conf` also on the kerberos server node. Enter the file, delete all of its contents and add the contents given below:
-
-       [kdcdefaults]
-       kdc_ports = 88
-       kdc_tcp_ports = 88
-       
-       [realms]
-       HADOOPSECURITY.COM = {
-       #master_key_type = aes256-cts
-       acl_file = /var/kerberos/krb5kdc/kadm5.acl
-       dict_file = /usr/share/dict/words
-       admin_keytab = /var/kerberos/krb5kdc/kadm5.keytab
-       supported_enctypes = aes256-cts:normal aes128-cts:normal des3-hmac-sha1:normal arcfour-hmac:normal des-hmac-sha1:normal des-cbc-md5:normal des-cbc-crc:normal
-       max_renewable_life = 7d
-       }
 
 * use the `sudo kdb5_util create` command to set a master password, In my case the password is `admin@123`.
 
