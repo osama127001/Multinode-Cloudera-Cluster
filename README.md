@@ -658,7 +658,7 @@ use the following set of commands to start kerberos services:(start krb5kdc on a
 
 It is also recommended to enable them, to start the service on boot.
 
-### 8. Install JCD Security policy files (All Nodes)
+### 8. Install JCE Security policy files (All Nodes)
 
 To installll JCE Policy files, use the following wget command to download the required file:
 
