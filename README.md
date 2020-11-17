@@ -658,6 +658,20 @@ use the following set of commands to start kerberos services:(start krb5kdc on a
 
 It is also recommended to enable them, to start the service on boot.
 
+### 8. Install JCD Security policy files (All Nodes)
+
+To installll JCE Policy files, use the following wget command to download the required file:
+
+       wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" "http://download.oracle.com/otn-pub/java/jce/8/jce_policy-8.zip"
+
+once the file is downloaded, we have to unzip it, for that, use this command to install `unzip`:
+
+       yum install unzip
+
+Now use the following command to unzip
+
+       unzip -o -j -q jce_policy-8.zip -d /usr/java/jdk1.8.0_141-cloudera/jre/lib/security/
+
 ### 8. Testing Kerberos
 
 * Now goto another host, other than the kerberos server node, and then enter `kinit root/admin` command and enter the password `admin`. now enter the command `klist` to check if the ticket is available. To delete a ticket, `kdestroy` is used.
