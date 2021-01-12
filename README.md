@@ -382,7 +382,7 @@ It is important to install JDK on all nodes, use the following command to instal
 </details>
 
 <details>
-<summaryConfiguring MySQL for Cloudera</summary>
+<summary> Configuring MySQL for Cloudera</summary>
 
 ## 16. Configuring MySQL for Cloudera
 
@@ -521,7 +521,7 @@ Installing and setting-up MySQL is different as the default database that is pro
 </details>
 
 <details>
-<summaryInstalling JDBC Driver</summary>
+<summary> Installing JDBC Driver</summary>
 
 ## 17. Installing JDBC Driver (all nodes)
 * install MySQL java connector on all nodes using the following commands:
@@ -658,7 +658,7 @@ If there are any issues while the `command details` section of adding the cluste
 </details>
 
 <details>
-<summary>Math Class</summary>
+<summary>Post Installations Setups</summary>
 
 # Post Installations Setups
 
