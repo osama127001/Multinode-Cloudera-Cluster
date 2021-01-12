@@ -5,11 +5,20 @@ implemenet Bigdata Solutions and provide all the services that are required to s
 
 **`Note:`** During the installation, if you are facing any issues, please visit the `Issues` part of the documentation as you might be facing the same issue that I faced. 
 
+<details>
+<summary>Downloading Required Stuff</summary>
+
 ## 1. Downloading Required Stuff:
 * [CentOS7 ISO Image](https://www.centos.org/download/)
 * [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
 
 Now open virtual box and click on the **new** button in order to create a new VM (Virtual Machine).
+
+</details>
+
+
+<details>
+<summary>Creating a VM using VirtualBox</summary>
 
 ## 2. Creating a VM using VirtualBox
 * Click on the new button.
@@ -37,6 +46,11 @@ After the creation of the VM is done, you can repeat step 2 in order to create a
 Note that the more nodes you create, the more resources will be consumed from your system. 
 For a normal cluster, you need atleast **1 Master and 2 slaves**
 
+</details>
+
+<details>
+<summary>Installation of CentOS7 on VM</summary>
+
 ## 3. Installation of CentOS7 on VM
    The Installation is relatively simple.
 * Select the language.
@@ -50,6 +64,11 @@ After the Installation is done, the system will ask to reboot. after the reboot 
 * password: **password that you just set in step 5**
 
 after entering the following credentials, you are currently in the localhost.
+
+</details>
+
+<details>
+<summary>Setup Static IP Address</summary>
 
 ## 4. Setup Static IP Address
    It is important to setup a static ip address in order to access the node on the network.
@@ -96,7 +115,12 @@ Update yum using the following command:
 
        yum update
 
-## 5. Check the availlable memory and storage
+</details>
+
+<details>
+<summary>Check the availlable memory and storage</summary>
+
+## Check the availlable memory and storage
 * to check the available memory of the system, use the following command:
 
        free -m
@@ -104,6 +128,11 @@ Update yum using the following command:
 * to check the available storage, use the following command:
 
        df -h
+
+</details>
+
+<details>
+<summary>Maximum number of open file requirementss</summary>
 
 ## 5. Maximum number of open file requirements
 * To check the current number of available number of open file descriptors, use the following command:
@@ -114,6 +143,11 @@ Update yum using the following command:
 * To set the value of open file descriptors. (recommended: 10000)
 
        ulimit -n 10000
+
+</details>
+
+<details>
+<summary>Changing the hostname of the machine</summary>
 
 ## 6. Changing the hostname of the machine
 * By default, the hostname is: `localhost`
@@ -131,6 +165,10 @@ Update yum using the following command:
 
 * reboot the system using the `reboot` command to make the changes.
 
+</details>
+
+<details>
+<summary>Setting the hostname in the hostfile</summary>
 
 ## 7. Setting the hostname in the hostfile
 * To view the hosts in the hosts file, enter the following command:
@@ -152,6 +190,11 @@ Update yum using the following command:
        ssh master
        ssh datanode1
        ssh datanode2
+
+</details>
+
+<details>
+<summary>Setup Password-less SSH</summary>
 
 ## 8. Setup Password-less SSH (Not Important)
 Password-less enables each node in the cluster to ssh any node without authentication or password. follow the steps given below in order to setup passwordless SSH
@@ -200,6 +243,11 @@ Password-less enables each node in the cluster to ssh any node without authentic
 * Enter the password of the target host. And now you can access 192.168.XYX.XYX from the current host
 * repeat the above process in order to setup the Password-less SSH on other nodes as well.
 
+</details>
+
+<details>
+<summary>Setup NTP on the server and the browser host</summary>
+
 ## 9. Setup NTP on the server and the browser host
 NTP ensures that the clocks of the nodes in the cluster are synchronized. follow the steps given below in order to set the NTP on each node:
 * Install NTP using the command: 
@@ -225,12 +273,22 @@ NTP ensures that the clocks of the nodes in the cluster are synchronized. follow
        server 0.asia.pool.ntp.org
        server 3.asia.pool.ntp.org  
 
+</details>
+
+<details>
+<summary>Disabling Firewalls / Configuring IP tables</summary>
+
 ## 10. Disabling Firewalls / Configuring IP tables
 
 * execute the following 2 commands given below to disable the firewall
 
        systemctl disable firewalld
        service firewalld stop
+
+</details>
+
+<details>
+<summary>Set the Network Config File</summary>
 
 ## 11. Set the Network Config File
 
@@ -242,6 +300,11 @@ NTP ensures that the clocks of the nodes in the cluster are synchronized. follow
 
        NETWORKING=yes
        HOSTNAME=localhost
+
+</details>
+
+<details>
+<summary>Disable SELinux and PackageKit and check umask value</summary>
 
 ## 12. Disable SELinux and PackageKit and check umask value
 It is important to disable SELinux for the ambari function to setup. 
@@ -269,6 +332,11 @@ It is important to disable SELinux for the ambari function to setup.
 
        echo umask 0022 >> /etc/profile
 
+</details>
+
+<details>
+<summary>Set Swappiness</summary>
+
 ## 13. Set Swappiness 
 
 * Cloudera recommends to set the value of swappiness between 1 and 10, based upon the strength of the machine, but its recommended to set `swappiness=1`
@@ -285,6 +353,10 @@ It is important to disable SELinux for the ambari function to setup.
 
        cat /proc/sys/vm/swappiness
 
+</details>
+
+<details>
+<summary>Disable Huge pages</summary>
 
 ## 14. Disable Huge pages
 * It is highly recommended to disable huge pages. for that, add the following lines in `/etc/rc.local`:
@@ -296,11 +368,21 @@ It is important to disable SELinux for the ambari function to setup.
 
        chmod +x /etc/rc.d/rc.local
 
+</details>
+
+<details>
+<summary>Install JDK for cloudera manager</summary>
+
 ## 15. Install JDK for cloudera manager (all nodes)
 
 It is important to install JDK on all nodes, use the following command to install JDK on all nodes:
 
        yum install java-1.8.0-openjdk
+
+</details>
+
+<details>
+<summaryConfiguring MySQL for Cloudera</summary>
 
 ## 16. Configuring MySQL for Cloudera
 
@@ -436,6 +518,11 @@ Installing and setting-up MySQL is different as the default database that is pro
 
 * in the above command, in my case, database type is `mysql`, database name and user is `cloudera`.
 
+</details>
+
+<details>
+<summaryInstalling JDBC Driver</summary>
+
 ## 17. Installing JDBC Driver (all nodes)
 * install MySQL java connector on all nodes using the following commands:
 
@@ -444,6 +531,11 @@ Installing and setting-up MySQL is different as the default database that is pro
        mkdir -p /usr/share/java/
        cd mysql-connector-java-5.1.46
        cp mysql-connector-java-5.1.46-bin.jar /usr/share/java/mysql-connector-java.jar
+
+</details>
+
+<details>
+<summary>Installation of Cloudera Manager, Deamons and Agents</summary>
 
 ## 18. Installation of Cloudera Manager, Deamons and Agents
 The installation of cloudera manager, deamons and agents is a bit different as the downloaded repo is not saved in the path where it can be installed, so `wget` the cloudera manager repo from the link given below:
@@ -482,6 +574,11 @@ The installation of cloudera manager, deamons and agents is a bit different as t
 
        yum install cloudera-manager-daemons cloudera-manager-agent
 
+</details>
+
+<details>
+<summary>Connecting Cloudera manager with MySQL</summary>
+
 ## 19. Connecting Cloudera manager with MySQL
 * last and most important, on master, use the following command to connect mysql with cloudera manager, if this command is not executed, the server will not run. if this command fails to execute, run this command after installing cloudera manager on the master node.
 
@@ -490,6 +587,11 @@ The installation of cloudera manager, deamons and agents is a bit different as t
 * Generally the command is:
 
        /opt/cloudera/cm/schema/scm_prepare_database.sh mysql scm scm
+
+</details>
+
+<details>
+<summary>Opening Cloudera Manager UI</summary>
 
 ## 20. Opening Cloudera Manager UI
 Once everything is installed and setup, restart cloudera agents on all nodes using the command:
@@ -508,6 +610,11 @@ Open the web browser, and Access the Cloudera manager UI using the following lin
 
        http://server.ip.address:7180
 
+
+</details>
+
+<details>
+<summary>Issues</summary>
 
 ## Issues
 
@@ -547,6 +654,11 @@ If there are any issues/errors related to getting `[service] canary`, for exampl
 If there are any issues while the `command details` section of adding the cluster, there will be a folder named `current` in `/dfs/nn` path, delete this folder using the following command and try again:
 
        rm -rf /dfs/nn/current
+
+</details>
+
+<details>
+<summary>Math Class</summary>
 
 # Post Installations Setups
 
@@ -702,6 +814,8 @@ Kerberos Security Name is `HADOOPSECURITY.COM` and KDC Server host, KDC Admin Se
 * enter the credentials, `cm/admin` and password will be `123`.
 
 * Now the in the rest of the setup, keep the defaults and continue.
+
+</details>
 
 
 
