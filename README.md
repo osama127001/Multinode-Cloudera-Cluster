@@ -73,6 +73,8 @@ after entering the following credentials, you are currently in the localhost.
 ## 4. Setup Static IP Address
    It is important to setup a static ip address in order to access the node on the network.
 
+* Before setting the IP address, Goto VirtualBox Settings, file>Host Network Manager, and add an adapter(vboxnet0) if not available. Make sure the IP(192.168.XX.YY) of the adapter and the IP of the VM that you are about to set are same in XX.
+
 * To set a static IP address, use the following command to add configurations:
 
        vi /etc/sysconfig/network-scripts/ifcfg-enp0s8
